@@ -1,0 +1,43 @@
+{
+  "status": "completed",
+  "started_utc": "2026-10-20T03:56:14Z",
+  "layers": 7,
+  "candidates": 16384,
+  "primary_done": 12304,
+  "primary_seconds_so_far": 97.27265030518174,
+  "primary_seconds": 129.1457854192704,
+  "truth_table": "raw/truth_table.npz",
+  "truth_table_sha256": "1fd5d0bb1e8d60463415a9340c10115a3dcc08dc9992b26ab146797ee06a49bc",
+  "independent_seconds": 102.99920811504126,
+  "independent_batch": 7,
+  "independent_max_abs_difference": 0.0,
+  "best_index": 15375,
+  "best_labels": [
+    3,
+    3,
+    0,
+    0,
+    0,
+    3,
+    3
+  ],
+  "best_materials": [
+    "TiO2",
+    "TiO2",
+    "SiO2",
+    "SiO2",
+    "SiO2",
+    "TiO2",
+    "TiO2"
+  ],
+  "min_fom": 0.9657121873473163,
+  "max_fom": 6.198538854379473,
+  "median_fom": 2.7069768400314356,
+  "second_best_gap": 0.09102253606128874,
+  "scalar_tmm_best_max_T_error": 7.438494264988549e-15,
+  "scalar_tmm_best_fom": 0.9657121873473147,
+  "scalar_tmm_best_fom_error": 1.6653345369377348e-15,
+  "validation": "passed",
+  "ended_utc": "2026-10-20T04:00:07Z",
+  "peak_rss_gib": 0.5987358093261719
+}

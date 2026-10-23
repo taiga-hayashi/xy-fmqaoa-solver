@@ -22,9 +22,13 @@ import numpy as np
 STUDY_DIR = Path(__file__).resolve().parents[1]
 PROJECT = STUDY_DIR.parents[1]
 CONFIG = json.loads((STUDY_DIR/'solver_fixedfm.json').read_text())
-PATHS = json.loads((PROJECT/'config/paths.local.json').read_text())['profiles']['server']
-INTERN = Path(PATHS['intern_fujitsu_root'])
-sys.path[:0] = [str(PROJECT/'src'), str(INTERN/'src'), str(INTERN), PATHS['extra_pythonpath']]
+if (PROJECT/'config/paths.local.json').exists():
+    PATHS = json.loads((PROJECT/'config/paths.local.json').read_text())['profiles']['server']
+    INTERN = Path(PATHS['intern_fujitsu_root'])
+    sys.path[:0] = [str(PROJECT/'src'), str(INTERN/'src'), str(INTERN), PATHS['extra_pythonpath']]
+else:
+    INTERN = PROJECT/'vendor/intern_fujitsu'
+    sys.path[:0] = [str(PROJECT/'src'), str(INTERN/'src'), str(INTERN)]
 import mlfilter_fmqa as M
 
 CODE = [Path(__file__).resolve(), STUDY_DIR/'solver_fixedfm.json', PROJECT/'src/mlfilter_fmqa.py', PROJECT/'src/qarp_pair_xy.py',
