@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "study": "mlfilter-scale",
+  "phase": "solver-fixedfm",
+  "protocol_phase": "exploratory",
+  "question": "同じ固定 FM に対し、ペナルティ係数 α を大きくすると SA が FM 最小解を見つける力(ソルバーの探索性能)が落ち、ランダム提案に近づくか。ペナルティ不要の XY-FMQAOA(p=1〜3)はそれと比べてどうか",
+  "decided_by": "利用者(2026-10-20)。目的: 大きいペナルティによるエネルギー地形の平準化を示し、XY-FMQAOA の動機にする",
+  "layers": [
+    6,
+    7,
+    8
+  ],
+  "truth": "Phase 0 で合格した全列挙表(SHA-256 を照合)。FM 学習の 40 点の値だけに使う",
+  "fm": {
+    "seeds": [
+      42,
+      101,
+      2024,
+      7,
+      19
+    ],
+    "initial_ids": "random.Random(seed).sample(range(4**L), 40)(Phase 1 の初期データと同じ)",
+    "training": "src/mlfilter_fmqa.py fit(): rank 2, AdamW, wd 0.01, lr 0.1, 120 epochs, model seed = seed",
+    "frozen": "学習後に固定し、全手法で同じ FM を使う。state_dict と SHA-256 を保存"
+  },
+  "samplers": {
+    "SA": {
+      "alphas": [
+        0.3,
+        1,
+        3,
+        10,
+        30,
+        100,
+        1000
+      ],
+      "reps": 10,
+      "num_reads": 100,
+      "num_sweeps": 1000,
+      "beta_schedule_type": "geometric(Neal の自動 β 範囲)",
+      "lambda": "S*alpha",
+      "sampler_seed": "seed*100000 + rep"
+    },
+    "RandomFM": {
+      "reps": 10,
+      "draws": 100,
+      "rule": "一様な実行可能ラベル 100 個(α→∞ の基準)",
+      "sampler_seed": "seed*100000 + rep"
+    },
+    "XY-FMQAOA": {
+      "backend": "OpenQARPPairXYQAOA(λ=0、積 W 初期状態、順序付き Ring XY)",
+      "depths": [
+        1,
+        2,
+        3
+      ],
+      "objectives": [
+        "mean",
+        "cvar10"
+      ],
+      "search": "1 深さ 1024 評価: 49 格子(p1 埋め込み)+ 1 つ浅い深さの最良角度の埋め込み + 一様乱数で 256 まで + 上位 4 点から Powell 各 192 + 残りを一様乱数(mlfilter-xydepth と同じ構成)",
+      "angle_seed": "SeedSequence([seed, 0, 1016, 49, depth])",
+      "budget_views": [
+        "1024",
+        "grid49(p=1 のみ。最初の 49 評価 = 通常 QAOA と同じ格子)"
+      ],
+      "sampling": "最良角度の厳密な確率分布から 100 shots × 10 reps(seed*100000 + rep)"
+    },
+    "Standard-QAOA": {
+      "layers": [
+        6
+      ],
+      "alphas": [
+        1,
+        10,
+        100
+      ],
+      "mixer": "X",
+      "search": "49 格子(mlfilter-fixedfm と同じ γ・β)",
+      "objective": "S で正規化した FM + α×違反 の期待値",
+      "sampling": "状態ベクトルから 100 shots × 10 reps"
+    }
+  },
+  "selection": "Phase 1 と同じ規則: 無効・評価済み・重複を除き、新規の実行可能候補のうち FM 最小を 1 個",
+  "metrics": {
+    "capture": "選んだ候補が未評価の FM 最小解か",
+    "norm_gap": "(選んだ候補の FM − 未評価 FM 最小)/(未評価 FM 最大 − 最小)。候補なしは 1",
+    "fm_rank_pct": "選んだ候補の未評価 FM 順位の百分位(0 が最良)",
+    "feasible": "サンプルのうち One-Hot を満たす割合",
+    "sample_fm_pct": "実行可能なサンプルの FM 百分位の平均(一様ランダムなら 0.5)。地形の平準化の指標",
+    "xy_exact": "XY は厳密分布から P(未評価 FM 最小)、ideal_capture100 = 1-(1-P)^100、期待 FM 百分位も計算",
+    "sa_contrast": "Neal は実行可能状態間の移動に違反状態(コスト λ)を経由するため、温度が λ 程度まで下がると移動が凍結する。凍結時の FM コントラスト = (近傍の実行可能状態間の FM 差の中央値)/λ(∝1/α)。参考に β_hot・β_cold も記録"
+  },
+  "statistics": "探索用。FM ごとに 10 reps の平均を取り、5 FM の中央値と IQR を示す。検定で結論を出さない",
+  "threads": 1
+}

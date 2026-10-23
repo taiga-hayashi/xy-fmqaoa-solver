@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "study": "mlfilter-scale",
+  "phase": "solver-xydeep",
+  "protocol_phase": "exploratory",
+  "question": "XY-FMQAOA を p=4〜6 に深くすると、固定 FM 上で調整済みの SA(α=1〜3)に近づくか、どこで頭打ちになるか",
+  "decided_by": "利用者(2026-10-20)",
+  "base": "solver-fixedfm の run(同じ固定 FM 5 本、L=6・7・8)。p=3 の最良角度から継続",
+  "depths": [4, 5, 6],
+  "objectives": ["mean", "cvar10"],
+  "search": "solver-fixedfm と同じ xy_search(): 1 深さ 1024 評価(49 格子の埋め込み + 1 つ浅い深さの最良角度の埋め込み + 一様乱数で 256 まで + 上位 4 点から Powell 各 192 + 残りを一様乱数)、SeedSequence([seed, 0, 1016, 49, depth])",
+  "sampling": "最良角度の厳密分布から 100 shots × 10 reps(seed*100000 + rep)",
+  "metrics": "solver-fixedfm と同じ(capture, norm_gap, fm_rank_pct, feasible, sample_fm_pct、厳密分布の P_unseen_min, ideal_capture100, expected_fm_pct)",
+  "cores": "他のセッションが 8〜46 番コアを使用中のため 4〜7 番の 4 コアで実行(1 ジョブ 1 コア)",
+  "threads": 1
+}

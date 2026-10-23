@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "analysis_id": "a-c6fea137c24a",
+  "study": "mlfilter-scale",
+  "category": "solver",
+  "created_utc": "2026-10-23T00:56:52.512218+00:00",
+  "purpose": "大きいペナルティ係数で SA の探索がランダムに近づく(エネルギー地形の平準化)こと、ペナルティ係数 α のスイートスポット、単純な XY-QAOA(p=1・49 格子・Mean 目的)の性能不足と深さ・CVaR 目的による改善を L=6,7,8 別々および重ね描きで図にする",
+  "inputs": [
+    {
+      "layers": 6,
+      "run_dir": "data/runs/mlfilter-scale/c-3b78e12aec76/r-28b3bfcef49f",
+      "summary": "data/runs/mlfilter-scale/c-3b78e12aec76/r-28b3bfcef49f/raw/summary.json",
+      "sha256": "27a14270f2342cf48fbcf885ce8b4c2ecc5fe39414032ca28875637f5c798414",
+      "kind": "solver"
+    },
+    {
+      "layers": 7,
+      "run_dir": "data/runs/mlfilter-scale/c-a2f92285dfd0/r-226968e37961",
+      "summary": "data/runs/mlfilter-scale/c-a2f92285dfd0/r-226968e37961/raw/summary.json",
+      "sha256": "c0eb5f1dc504d5689f6bd8cbdc6bff1daf786d11699aad6965c4aed468ea3235",
+      "kind": "solver"
+    },
+    {
+      "layers": 8,
+      "run_dir": "data/runs/mlfilter-scale/c-6bf5d166318b/r-6b014cb25334",
+      "summary": "data/runs/mlfilter-scale/c-6bf5d166318b/r-6b014cb25334/raw/summary.json",
+      "sha256": "3896ba4da018518a3b7d245017eafc272c6151f40b2c8a381b30d5f1d8a25964",
+      "kind": "solver"
+    },
+    {
+      "kind": "xydeep",
+      "layers": 6,
+      "run_dir": "data/runs/mlfilter-scale/c-250d1b0a7b0c/r-4298770ebd51",
+      "summary": "data/runs/mlfilter-scale/c-250d1b0a7b0c/r-4298770ebd51/raw/summary.json",
+      "sha256": "0d469e00c3687c263497576583d750399ad43d1766ef77582af1ce0bcb800a20"
+    },
+    {
+      "kind": "xydeep",
+      "layers": 7,
+      "run_dir": "data/runs/mlfilter-scale/c-87cd65d36fa8/r-5f01be92933a",
+      "summary": "data/runs/mlfilter-scale/c-87cd65d36fa8/r-5f01be92933a/raw/summary.json",
+      "sha256": "4b6c49aca9eaf206cc5df54441f5bc8f6af85dc0350f600fede0e3b4521cea27"
+    },
+    {
+      "kind": "xydeep",
+      "layers": 8,
+      "run_dir": "data/runs/mlfilter-scale/c-608f29f44601/r-c1ff80c81b16",
+      "summary": "data/runs/mlfilter-scale/c-608f29f44601/r-c1ff80c81b16/raw/summary.json",
+      "sha256": "3a167fdd749c800c61f23793e6a9f1e59fbfd566dc34ee9b6d312801f11eb20a"
+    }
+  ],
+  "experiment_config": "experiments/mlfilter-scale/solver_fixedfm.json",
+  "aggregation": {
+    "unit": "固定 FM(L ごとに 5 本、seed 42/101/2024/7/19)",
+    "within_unit": "10 reps の平均",
+    "center": "5 FM の中央値",
+    "uncertainty": "5 FM の IQR(SA のみ帯で表示)"
+  },
+  "selection": {
+    "xy_objective_main": "cvar10(mean 版も同じ図形式で保存)",
+    "xy_budget": "1024 角度評価(grid49 版は CSV のみ)",
+    "gap_figure_alpha": "α≥1(α=0.3 は L=6・8 で実行可能候補なし)",
+    "xy_depths": "p=1〜3 は solver-fixedfm、p=4〜6 は solver-xydeep(p=3 の最良角度から継続)。flattening・gap 図は p=1〜3、depth 図は p=1〜6"
+  },
+  "style": "src/aps_style.py(PRR/APS 形式、タイトルなし)",
+  "environment": {
+    "python": "/Users/hayashitaiga/.venvs/fas/bin/python (matplotlib 3.11.1)",
+    "notebook": "/opt/homebrew/bin/jupyter nbconvert (matplotlib 3.10.9)"
+  },
+  "supersedes": "a-c62ac6b99b06",
+  "annotation_revision": {
+    "change": "Remove only Shaded: sweet spot annotation from per-layer panels; shading and numerical inputs unchanged",
+    "outputs": [
+      "penalty_sweetspot",
+      "penalty_sweetspot_L6",
+      "penalty_sweetspot_L7",
+      "penalty_sweetspot_L8"
+    ],
+    "csv_sha256": {
+      "/Users/hayashitaiga/Library/CloudStorage/GoogleDrive-taiga.hayashi@gmail.com/My Drive/Fujitsu_OpenQarp/analysis/mlfilter-scale/solver/csv/solver_exact_per_fm.csv": "e36e580c100883ee23227b725bca941577988bf96fb98bf75496da86b9ea367c",
+      "/Users/hayashitaiga/Library/CloudStorage/GoogleDrive-taiga.hayashi@gmail.com/My Drive/Fujitsu_OpenQarp/analysis/mlfilter-scale/solver/csv/solver_per_fm.csv": "c39a7004d5b91065f0486369c70f5349c2007f50dbeb3a6a133a5a72301cec73",
+      "/Users/hayashitaiga/Library/CloudStorage/GoogleDrive-taiga.hayashi@gmail.com/My Drive/Fujitsu_OpenQarp/analysis/mlfilter-scale/solver/csv/solver_summary.csv": "06bc05d95fea3d5b02d2961dafd1b66e10c26401514ee86718e39f0bce735fd6"
+    },
+    "notebook": "Saved first displayed PNG updated; full notebook not rerun"
+  }
+}
