@@ -6,7 +6,13 @@
 set -euo pipefail
 
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
-PY="${PYTHON:-python3}"
+if [ -n "${PYTHON:-}" ]; then
+  PY="$PYTHON"
+elif [ -x "/home/jovyan/FMA/.venv/bin/python" ]; then
+  PY="/home/jovyan/FMA/.venv/bin/python"
+else
+  PY="python3"
+fi
 PARALLEL="${PARALLEL:-0}"
 
 truth_dir_for() {
