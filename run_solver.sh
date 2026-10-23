@@ -1,13 +1,9 @@
 #!/usr/bin/env bash
-# L=6, 7, 8 の固定FM学習・SA・XY-FMQAOA (p=1..6) の全計算からCSV・PDF生成までを一括実行するスクリプト
+# L=6, 7, 8 の固定FM学習・SA・XY-FMQAOA (p=1..6) の計算のみを一括実行するスクリプト（プロットは行わない）
 # 使い方:
-#   bash run_all.sh          # L=6, 7, 8 すべてを一括実行（シード並列）
-#   bash run_all.sh 7        # L=7 のみ一括実行
-#   PARALLEL=0 bash run_all.sh 6  # 直列で実行したい場合
+#   bash run_all.sh          # L=6, 7, 8 すべての計算を一括実行（シード並列）
+#   bash run_all.sh 7        # L=7 のみ計算を一括実行
 set -euo pipefail
-
-ROOT="$(cd "$(dirname "$0")" && pwd)"
-cd "$ROOT"
 
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
 
@@ -92,30 +88,6 @@ run_layer() {
 
   echo "[L=$L] Step 7/7: Aggregating xy_deep (p=4..6) -> raw/summary.json"
   "$PY" experiments/mlfilter-scale/py/xy_deep.py analyze --run-dir "$XYDEEP_RUN"
-
-  # Update analysis_config.json with the newly created runs for layer L
-  "$PY" - "$L" "$SOLVER_RUN" "$XYDEEP_RUN" <<'PYEOF'
-import hashlib, json, sys
-from pathlib import Path
-L = int(sys.argv[1])
-root = Path.cwd()
-solver_run = Path(sys.argv[2]).resolve().relative_to(root)
-xydeep_run = Path(sys.argv[3]).resolve().relative_to(root)
-cfg_path = root / "analysis/mlfilter-scale/solver/analysis_config.json"
-cfg = json.loads(cfg_path.read_text())
-for item in cfg["inputs"]:
-    if item["layers"] == L and item["kind"] == "solver":
-        s = solver_run / "raw/summary.json"
-        item["run_dir"] = str(solver_run)
-        item["summary"] = str(s)
-        item["sha256"] = hashlib.sha256((root / s).read_bytes()).hexdigest()
-    elif item["layers"] == L and item["kind"] == "xydeep":
-        s = xydeep_run / "raw/summary.json"
-        item["run_dir"] = str(xydeep_run)
-        item["summary"] = str(s)
-        item["sha256"] = hashlib.sha256((root / s).read_bytes()).hexdigest()
-cfg_path.write_text(json.dumps(cfg, ensure_ascii=False, indent=2) + "\n")
-PYEOF
 }
 
 TARGET="${1:-all}"
@@ -123,10 +95,6 @@ if [ "$TARGET" = "all" ]; then
   for L in 6 7 8; do
     run_layer "$L"
   done
-  echo "============================================================"
-  echo "Rebuilding CSVs and figures in analysis/mlfilter-scale/solver/"
-  echo "============================================================"
-  "$PY" analysis/mlfilter-scale/solver/plot.py
 else
   run_layer "$TARGET"
 fi

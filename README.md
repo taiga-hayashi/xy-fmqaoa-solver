@@ -1,8 +1,6 @@
 # XY-FMQAOA Solver Benchmark (`mlfilter-scale`)
 
-## A. サーバー（`/home/jovyan/FMA/Fujitsu_OpenQarp`）に既にファイルがある状態で一括実行する場合
-
-サーバーのターミナルに以下をそのままコピペすると、$L=6, 7, 8$ の全計算（固定FM学習・SA・XY-FMQAOA $p=1\sim 6$）から集計・プロット更新まで一括で回ります：
+サーバー（`/home/jovyan/FMA/Fujitsu_OpenQarp`）のターミナルに以下をそのままコピペすると、$L=6, 7, 8$ の計算（固定FM学習・SA・XY-FMQAOA $p=1\sim 6$・`summary.json` 出力）のみが一括で回ります（プロットは実行しません）：
 
 ```bash
 cd /home/jovyan/FMA/Fujitsu_OpenQarp
@@ -42,14 +40,4 @@ for L in 6 7 8; do
   wait
   "$PY" experiments/mlfilter-scale/py/xy_deep.py analyze --run-dir "$XYDEEP_RUN"
 done
-```
-
----
-
-## B. 新規環境へクローンして一括実行する場合
-
-```bash
-git clone https://github.com/taiga-hayashi/xy-fmqaoa-solver.git
-cd xy-fmqaoa-solver
-bash run_all.sh
 ```
