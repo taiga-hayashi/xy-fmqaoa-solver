@@ -38,7 +38,14 @@ def build_csv():
     CSV.mkdir(exist_ok=True)
     per_fm, summary, exact = [], [], []
     for item in CONFIG['inputs']:
-        path = PROJECT/item['summary']; assert sha(path)==item['sha256'], f'input changed: {path}'
+        path = PROJECT/item['summary']
+        if not path.exists():
+            cfg_dir = (PROJECT/item['run_dir']).parent
+            candidates = sorted(cfg_dir.glob('r-*/raw/summary.json'), key=lambda q: q.stat().st_mtime)
+            assert candidates, f'no summary.json found under {cfg_dir} (run bash run_solver.sh first, or pass --replot)'
+            path = candidates[-1]
+        elif 'sha256' in item:
+            assert sha(path)==item['sha256'], f'input changed: {path}'
         d = json.loads(path.read_text()); L = d['layers']; assert L==item['layers']
         for sampler, rows in d['per_fm'].items():
             for r in rows: per_fm.append({'layers':L,'sampler':sampler,**r})
