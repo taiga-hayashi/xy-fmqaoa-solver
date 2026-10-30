@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "study": "mlfilter-paper-repro",
+  "description": "Self-contained reproduction pipeline for the 8 figures in analysis/mlfilter-scale/paper/pdf (excluding Boltzmann comparisons).",
+  "optics": {
+    "layers_list": [6, 7, 8],
+    "materials": ["SiO2", "Si3N4", "Al2O3", "TiO2"],
+    "thickness_nm": 50.0,
+    "wavelength_min_nm": 300,
+    "wavelength_max_nm": 2500
+  },
+  "surrogate": {
+    "rank": 2,
+    "optimizer": "AdamW",
+    "weight_decay": 0.01,
+    "learning_rate": 0.1,
+    "epochs": 120
+  },
+  "sa": {
+    "num_reads": 100,
+    "num_sweeps": 1000,
+    "beta_schedule_type": "geometric"
+  },
+  "adaptive": {
+    "initial_alpha": 1.0,
+    "min_alpha": 0.01,
+    "max_alpha": 100.0
+  },
+  "random_stream_offset": 73101,
+  "xy_default": {
+    "depth": 4,
+    "objective": "cvar10",
+    "first_evals": 4096,
+    "cycle_evals": 256,
+    "local_maxfev": 192
+  },
+  "suites": {
+    "fixed_fm": {
+      "layers_list": [6, 7, 8],
+      "seeds": [42, 101, 2024, 7, 19],
+      "initial_points": 40,
+      "reps": 10,
+      "schedules": ["auto", "fmscale", "wide10x", "fmscale10x"],
+      "sa_alphas": [1, 3, 10, 30, 100, 1000],
+      "xy": {
+        "depth": 4,
+        "objective": "cvar10",
+        "evals_per_depth": 4096
+      }
+    },
+    "confirm1": {
+      "layers": 7,
+      "budget": 100,
+      "initial_points": 40,
+      "proposal_cycle_cap": 60,
+      "seeds": [5001, 5002, 5003, 5004, 5005, 5006, 5007, 5008, 5009, 5010, 5011, 5012, 5013, 5014, 5015],
+      "main_conditions": ["XY-FMQAOA", "alpha1", "alpha100", "alpha0.3", "RandomFM", "Random"],
+      "conditions": [
+        {"id": "XY-FMQAOA", "kind": "xy", "depth": 4, "objective": "cvar10", "first_evals": 4096, "cycle_evals": 256, "local_maxfev": 192},
+        {"id": "alpha0.3", "kind": "sa", "alpha": 0.3, "schedule": "auto"},
+        {"id": "alpha1", "kind": "sa", "alpha": 1.0, "schedule": "auto"},
+        {"id": "alpha100", "kind": "sa", "alpha": 100.0, "schedule": "auto"},
+        {"id": "RandomFM", "kind": "randomfm"},
+        {"id": "Random", "kind": "random"},
+        {"id": "alpha3", "kind": "sa", "alpha": 3.0, "schedule": "auto"},
+        {"id": "alpha10", "kind": "sa", "alpha": 10.0, "schedule": "auto"},
+        {"id": "alpha30", "kind": "sa", "alpha": 30.0, "schedule": "auto"},
+        {"id": "alpha1000", "kind": "sa", "alpha": 1000.0, "schedule": "auto"},
+        {"id": "Adaptive", "kind": "adaptive"},
+        {"id": "alpha100-fmscale", "kind": "sa", "alpha": 100.0, "schedule": "fmscale"},
+        {"id": "alpha100-wide10x", "kind": "sa", "alpha": 100.0, "schedule": "wide10x"},
+        {"id": "alpha100-fmscale10x", "kind": "sa", "alpha": 100.0, "schedule": "fmscale10x"}
+      ]
+    },
+    "confirm2": {
+      "layers": 7,
+      "budget": 100,
+      "initial_points": 40,
+      "proposal_cycle_cap": 60,
+      "seeds": [
+        6001, 6002, 6003, 6004, 6005, 6006, 6007, 6008, 6009, 6010,
+        6011, 6012, 6013, 6014, 6015, 6016, 6017, 6018, 6019, 6020,
+        6021, 6022, 6023, 6024, 6025, 6026, 6027, 6028, 6029, 6030
+      ],
+      "conditions": [
+        {"id": "XY-FMQAOA", "kind": "xy", "depth": 4, "objective": "cvar10", "first_evals": 4096, "cycle_evals": 256, "local_maxfev": 192},
+        {"id": "CatSA", "kind": "catsa"},
+        {"id": "alpha1", "kind": "sa", "alpha": 1.0, "schedule": "auto"},
+        {"id": "alpha100", "kind": "sa", "alpha": 100.0, "schedule": "auto"},
+        {"id": "alpha0.3", "kind": "sa", "alpha": 0.3, "schedule": "auto"},
+        {"id": "RandomFM", "kind": "randomfm"}
+      ]
+    },
+    "explore_L678": {
+      "layers_list": [6, 7, 8],
+      "budget": 100,
+      "initial_points": 40,
+      "proposal_cycle_cap": 60,
+      "seeds": [42, 101, 2024, 7, 19],
+      "conditions": [
+        {"id": "XY-FMQAOA", "kind": "xy", "depth": 4, "objective": "cvar10", "first_evals": 4096, "cycle_evals": 256, "local_maxfev": 192},
+        {"id": "alpha0.3", "kind": "sa", "alpha": 0.3, "schedule": "auto"},
+        {"id": "alpha1", "kind": "sa", "alpha": 1.0, "schedule": "auto"},
+        {"id": "alpha100", "kind": "sa", "alpha": 100.0, "schedule": "auto"},
+        {"id": "RandomFM", "kind": "randomfm"},
+        {"id": "Random", "kind": "random"}
+      ]
+    }
+  },
+  "smoke": {
+    "surrogate": {"epochs": 40},
+    "sa": {"num_reads": 40, "num_sweeps": 80},
+    "fixed_fm": {
+      "seeds": [42, 101],
+      "reps": 2,
+      "xy": {"depth": 2, "objective": "cvar10", "evals_per_depth": 64}
+    },
+    "confirm1": {
+      "seeds": [5001, 5002],
+      "budget": 48,
+      "initial_points": 40,
+      "proposal_cycle_cap": 8,
+      "xy_override": {"depth": 2, "first_evals": 64, "cycle_evals": 24, "local_maxfev": 16}
+    },
+    "confirm2": {
+      "seeds": [6001, 6002, 6003],
+      "budget": 48,
+      "initial_points": 40,
+      "proposal_cycle_cap": 8,
+      "xy_override": {"depth": 2, "first_evals": 64, "cycle_evals": 24, "local_maxfev": 16}
+    },
+    "explore_L678": {
+      "seeds": [42, 101],
+      "budget": 48,
+      "initial_points": 40,
+      "proposal_cycle_cap": 8,
+      "xy_override": {"depth": 2, "first_evals": 48, "cycle_evals": 16, "local_maxfev": 12}
+    }
+  }
+}
+

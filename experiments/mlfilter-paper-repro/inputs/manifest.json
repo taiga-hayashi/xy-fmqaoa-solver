@@ -1,0 +1,16 @@
+{
+  "note": "Bundled from data/inputs/mlfilter/v1-public-code/reference for standalone server execution. License/provenance of original public files is unconfirmed per AGENTS.md; do not redistribute publicly without verification.",
+  "files": [
+    {
+      "path": "reference/dielectric_ref.txt",
+      "size": 60631,
+      "sha256": "b677f759dc3482008856a601bc93f9d8ec179f66fe18ca98047fb5ab68c066cd"
+    },
+    {
+      "path": "reference/solar_spectrum.txt",
+      "size": 18854,
+      "sha256": "ce973bff8cb32f5172207764048f773465a7ae1f3a475882654aac4928027428"
+    }
+  ]
+}
+
